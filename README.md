@@ -27,5 +27,5 @@ That is char "N" is *exact mapping* of data that sha1 produced it is not hex str
 I've done some code that uses method explained above. So it should work where you can't have access to `ArrayBufer`. 
 It works only with plain javascript strings.
 
-I'm using Rusha.js as sha1 function, all info you can find here. You can use anything. 
-Can't include it here since post body is limited to 30000 chars. It's all in jsfiddle link bellow code. There the key and message(baseString) for testing are used from twitter api example. Also there are 3 functions, byteLength hexToString, and oneByteChar for operations that hmacSha1 uses. 
+I'm using *Rusha.js* as sha1 function, all info you can find [here](https://github.com/srijs/rusha). You can use anything. 
+It's all in jsfiddle link bellow code. There the key and message(baseString) for testing are used from twitter api example. Also there are 3 functions, byteLength hexToString, and oneByteChar for operations that hmacSha1 uses. 
