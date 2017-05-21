@@ -22,10 +22,11 @@ In this context it's good to think that sha1 spits out hex string by treating ev
 
 That is char "N" is *exact mapping* of data that sha1 produced it is not hex string representation of data. If we have 40 hex chars, that means 40 bytes and by [SHA1 rfc](https://tools.ietf.org/html/rfc2104), sha1 produces 20 byte data. By doing this conversion we get that 20 byte data and all the time we are using strings with same effect if we were using ArrayBuffer, at least that's the idea.
 
-### Implementation
+## Implementation
 
 I've done some code that uses method explained above. So it should work where you can't have access to `ArrayBufer`. 
 It works only with plain javascript strings.
 
-I'm using *Rusha.js* as sha1 function, all info you can find [here](https://github.com/srijs/rusha). You can use anything. 
-It's all in jsfiddle link bellow code. There the key and message(baseString) for testing are used from twitter api example. Also there are 3 functions, byteLength hexToString, and oneByteChar for operations that hmacSha1 uses. 
+I'm using *Rusha.js* as sha1 function, all info you can find [here](https://github.com/srijs/rusha). You can use anything you want for sha1. 
+There the key and message(baseString) for testing are used from twitter api example. Also there are 3 functions, byteLength hexToString, and oneByteChar for operations that hmacSha1 uses.
+
