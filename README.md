@@ -3,7 +3,8 @@ Implementation of [HMAC algorithm](https://en.wikipedia.org/wiki/Hash-based_mess
 
 In order to utilise many free APIs, communication with server needs integrity and authentication checks for the application that access it and for user in which name application makes the request. Lot's of API's still require [OAuth 1.0a](https://oauth.net/core/1.0a/#anchor15), where HMAC_SHA1 is significant part, for that purpose. 
 
-This implementation of HMAC_SHA1 is to be used where `ArrayBuffer` is not an option for what ever reason.
+This implementation of HMAC_SHA1 is to be used where `ArrayBuffer` is not an option for what ever reason. Hence it works only with plain javascript strings.
+
 ### Idea
 
 It seems that sha1 functions by default return string of 40 hex chars that is just, well *hex string representation* of underlying data, not the data itself. Meaning if sha1 produces data stream of, for example:
@@ -27,7 +28,7 @@ That is char "N" is *exact mapping* of data that sha1 produced it is not hex str
 ## Usage
 
 I've done some code that uses method explained above. So it should work where you can't have access to `ArrayBufer`. 
-It works only with plain javascript strings.
+
 
 I'm using *Rusha.js* as sha1 function, all info you can find [here](https://github.com/srijs/rusha). You can use anything you want for sha1.  Also there are 3 functions, byteLength hexToString, and oneByteChar for operations that hmacSha1 uses.
 #### Examples:
