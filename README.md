@@ -51,7 +51,7 @@ hmacSha1.digest("key", "The quick brown fox jumps over the lazy dog") // de7c9b8
 ```
 
 ##### Note:
-If key or the massage contain backward slash the JS engine fill interpret it as a escape sequence character "\\", or in other words it will ignore it. So the funcion produces digest like there is no escape sequence character present, in both strings.
+If *key* or the *massage* contain backward slash the JS engine fill interpret it as a escape sequence character "\\", or in other words it will ignore it. So the funcion produces digest like there is no escape sequence character present, in both strings.
 
 
 ```javascript
