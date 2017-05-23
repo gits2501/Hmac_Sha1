@@ -27,10 +27,10 @@ That is char "N" is *exact mapping* of data that sha1 produced it is not hex str
 
 ## Usage
 
-I've done some code that uses method explained above. So it should work where you can't have access to `ArrayBufer`. 
+In this repo there are two implementations om hmac_sha1, one uses behavior delegation pattern the other functional pattern. So you can pick what ever soothes your needs.
 
 
-Also implementation uses *Rusha.js* as sha1 function, all info you can find [here](https://github.com/srijs/rusha). You can use anything you want for sha1.  Also there are 3 functions, byteLength hexToString, and oneByteChar for operations that hmacSha1 uses.
+Also both implementation use *Rusha.js* as sha1 function, all info you can find [here](https://github.com/srijs/rusha). You can use anything you want for sha1.  Also there are 3 functions, byteLength hexToString, and oneByteChar for operations that hmacSha1 uses.
 #### Examples:
 In this example the key and message (baseString) for testing are used from [twitter api example](https://dev.twitter.com/oauth/overview/creating-signatures).
 
