@@ -1,8 +1,6 @@
 
 (function () {
-    var 
-
-    util = {
+    var util = {
         getDataType: function (data) {
             if (typeof data === 'string') {
                 return 'string';
@@ -507,8 +505,8 @@
 }()); // end Rusha
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-(function(){ 
-  "use strict" 
+var HmacSha1 = (function(){ 
+   "use strict" 
   var sha = new Rusha();   // this is where we make an "instance" of sha1 function
                            // You can use whatever library you choose for sha1,
                            // here we used Rusha.js 
@@ -533,8 +531,7 @@
       
        if(kLen > this.blocksize){ 
           key = this.hexToString(sha1(key)); // The hash of 40 hex chars(40bytes) convert to exact char mappings,
-                                             // each char has codepoint from 0x00 to 0xff. Produces string of
-                                             // 20byte length
+                                           // each char has codepoint from 0x00 to 0xff.Produces string of 20 bytes.
          
           var hashedKeyLen =  this.byteLength(key); // take the length of key
        }
@@ -596,7 +593,7 @@
       
       for (i; i < len; i++){
         var code = str.charCodeAt(i); // take single character from string
-        if(code >= 0x0 && code <= 0xff) byteLen++; // check that it is only 1byte in lenght and increase counter
+        if(code >= 0x0 && code <= 0xff) byteLen++;  // check that it is only 1byte in lenght and increase counter
         else{
            throw new Error("More the 1 byte code detected, byteLength functon aborted.");
            return;
@@ -662,6 +659,15 @@
  return HmacSha1;  // returns function that can be used in constructor calls, with 'new'
 
 })() 
+
+
+var baseStr = "POST&https%3A%2F%2Fapi.twitter.com%2F1%2Fstatuses%2Fupdate.json&include_entities%3Dtrue%26oauth_consumer_key%3Dxvz1evFS4wEEPTGEFPHBog%26oauth_nonce%3DkYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1318622958%26oauth_token%3D370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb%26oauth_version%3D1.0%26status%3DHello%2520Ladies%2520%252B%2520Gentlemen%252C%2520a%2520signed%2520OAuth%2520request%2521"
+
+var key = "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw&LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE";
+
+hmacSha1 = new HmacSha1();
+
+console.log(hmacSha1.digest("ke\\y", "So\\me mess\\age"));
 
 
 
