@@ -549,13 +549,13 @@
         
          for(var j = 0; j < this.blocksize; j++){ 
                
-             if(diff && (j+diff) >= this.blocksize || j >= hashedKeyLen){ // if diff exists (key is shorter then
-                                                            // blocksize) and if we are at boundry where wee should
-                                                            // append 0x00 to the lenght of blocksize. Or the key
-                                                            // was too lang and was hashed, then also we need to 
-                                                            // append 0x00 at the end.
-                o_zeroPaddedCode = 0x00 ^ opad;   
-                opad_key += String.fromCharCode(o_zeroPaddedCode);
+             if(diff && (j+diff) >= this.blocksize || j >= hashedKeyLen){  // if diff exists (key is shorter then
+                                                        // blocksize) and if we are at boundry where we should
+                                                        // be, apply XOR on zero byte and constants, result put
+                                                        // in corresponding padding key. Or the key was too long
+                                                        // and was hashed, then also we need to do same thing.
+                o_zeroPaddedCode = 0x00 ^ opad;  //XOR the zero byte with outer padding constant 
+                opad_key += String.fromCharCode(o_zeroPaddedCode); // convert result back to string
                  
                 i_zeroPaddedCode = 0x00 ^ ipad;
                 ipad_key += String.fromCharCode(i_zeroPaddedCode);
@@ -584,8 +584,8 @@
      }
   }
   
-  HmacSha1.prototype.byteLength  = function (str){  // counts characters only 1byte in length, of a string.
-                                                    // Very similar to oneByteChar()
+  HmacSha1.prototype.byteLength  = function (str){  // Counts characters only 1byte in length, of a string.
+                                                    // Very similar to oneByteChar().
                                                     // For clarity 2 funtions are made.
       var len = str.length;
       var i = 0;

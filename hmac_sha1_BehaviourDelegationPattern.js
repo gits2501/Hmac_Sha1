@@ -520,7 +520,7 @@
       
      var pocket = arguments[arguments.length-1] // take last argument
      pocket.opad = 0x5c;  // outer padding  constant = (0x5c) . And 0x5c is just hexadecimal for backward slash "\"
-     pocket.ipad =  0x36; // outer padding  constant = (0x5c) . And 0x5c is just hexadecimal for backward slash "\"
+     pocket.ipad =  0x36; // inner padding  constant = (0x36) . And 0x5c is just hexadecimal for char "6"
                           // We made both constants private. See definition of AttachPocket() function bellow. 
   }  
   hmacSha1.digest = function (key, baseString){ // the actual hmac_sha1 function
@@ -531,7 +531,7 @@
      var ipad_key = "";   // inner padded key
      this.blocksize = 64; // 64 when using these hash functions: SHA-1, MD5, RIPEMD-128/160 .
      
-     var kLen = this.byteLength(key); // length of key in bytes;
+     var kLen = this.byteLength(key);     // length of key in bytes;
      
      if(kLen < this.blocksize){  
         var diff = this.blocksize - kLen; // diff is how mush  blocksize is bigger then the key
@@ -539,8 +539,8 @@
       
      if(kLen > this.blocksize){ 
         key = this.hexToString(sha1(key)); // The hash of 40 hex chars(40bytes) convert to exact char mappings,
-                                           // each char has codepoint from 0x00 to 0xff. Produces string of
-                                           // 20byte length
+                                           // where each char has codepoint from 0x00 to 0xff. Produces string of
+                                           // 20byte length.
         var hashedKeyLen =  this.byteLength(key); // take the length of key
      }
       
@@ -558,12 +558,13 @@
         for(var j = 0; j < this.blocksize; j++){ 
                
            if(diff && (j+diff) >= this.blocksize || j >= hashedKeyLen){ // if diff exists (key is shorter then
-                                                            // blocksize) and if we are at boundry where wee should
-                                                            // append 0x00 to the lenght of blocksize. Or the key
-                                                            // was too lang and was hashed, then also we need to 
-                                                            // append 0x00 at the end.
-               o_zeroPaddedCode = 0x00 ^ pocket.opad;   
-               opad_key += String.fromCharCode(o_zeroPaddedCode);
+                                                        // blocksize) and if we are at boundry where we should
+                                                        // be, apply XOR on zero byte and constants, result put
+                                                        // in corresponding padding key. Or the key was too long
+                                                        // and was hashed, then also we need to do same thing.
+
+               o_zeroPaddedCode = 0x00 ^ pocket.opad; // XOR the zero byte with outer padding constant
+               opad_key += String.fromCharCode(o_zeroPaddedCode); // convert result back to string
                  
                i_zeroPaddedCode = 0x00 ^ pocket.ipad;
                ipad_key += String.fromCharCode(i_zeroPaddedCode);
@@ -591,7 +592,7 @@
   }
 
   
-  hmacSha1.byteLength  = function (str){  // counts characters only 1byte in length, of a string.
+  hmacSha1.byteLength  = function (str){  // Counts characters only 1byte in length, of a string.
                                           // Very similar to oneByteChar().
                                           // For clarity 2 funtions are made.
       var len = str.length;
@@ -602,7 +603,7 @@
         var code = str.charCodeAt(i); // take single character from string
         if(code >= 0x0 && code <= 0xff) byteLen++; // check that it is only 1byte in lenght and increase counter
         else{
-           throw new Error("More the 1 byte code detected, byteLength functon aborted.");
+           throw new Error("More the 1 byte code detected, |byteLength| functon aborted.");
            return;
         }
         
@@ -618,7 +619,7 @@
           return str.charAt(idx); // return chars
        }    
        else{ 
-          throw new Error("More then 1byte character detected, |oneByteCharAt()| function  is aborted.")
+          throw new Error("More then 1byte character detected, |oneByteCharAt| function  is aborted.")
        }
     
   }
@@ -643,7 +644,7 @@
            l = sha1Output[i]; // take "left" char
            
            if(typeof l === "number") lcode = parseInt(l); // parse the number
-           else if(typeof l === "string") lcode = parseInt(l,16); // take the code if char letter is hex number
+           else if(typeof l === "string") lcode = parseInt(l,16); // take the code if char is hex number
                                                                   // in set (a...f)
            
             shiftedL = lcode << 4 ; // shift it to left 4 places, gets filled in with 4 zeroes from the right
@@ -652,8 +653,8 @@
            if(typeof r === "number") rcode = parseInt(r); // parse the number
            else if(typeof r === "string") rcode = parseInt(r,16); 
            
-            bin = shiftedL | rcode; // 
-            char = String.fromCharCode(bin);
+            bin = shiftedL | rcode; // concatenate pair of hex chars into one
+            char = String.fromCharCode(bin); 
             result += char;
      
             
@@ -663,7 +664,8 @@
    return result;
   }
 
- function AttachPocket (){ // fucntion that attaches private object (pocket) to new "instance" of hmacSha1 and returns that instance
+ function AttachPocket (){ // Fucntion that attaches private object (pocket) to new "instance" of hmacSha1 and 
+                           // returns that instance.
     
      var pocket = {}; 
      
@@ -686,6 +688,7 @@
   } 
      
    
- return AttachPocket;  // returns function that can be used with new but really doesnt have to, since it returns own object
+ return AttachPocket;  // returns function that can be used with new but really doesnt have to, since it returns
+                       //  own object
 
 })()
