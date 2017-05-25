@@ -30,7 +30,7 @@ That is char "N" is *exact mapping* of data that sha1 produced it is not hex str
 In this repo there are two implementations of hmac_sha1, one uses behavior delegation pattern the other functional pattern. So you can pick what ever soothes your needs. Behaviour delegation  code uses custom implementation of private variables, more about that [here](https://stackoverflow.com/questions/32748078/variable-privacy-in-javascripts-behaviour-delegation-pattern/43476020#43476020).
 
 
-Also both implementation use *Rusha.js* as sha1 function, all info you can find [here](https://github.com/srijs/rusha). You can use anything you want for sha1.  Also there are 3 functions, byteLength hexToString, and oneByteChar for operations that hmacSha1 uses.
+Also both implementation use *Rusha.js* as sha1 function, all info you can find [here](https://github.com/srijs/rusha). You can use anything you want for sha1.  Also there are 3 functions, byteLength, hexToString, and oneByteChar for operations that hmacSha1 uses.
 #### Examples:
 In this example the key and message (baseString) for testing are used from [twitter api example](https://dev.twitter.com/oauth/overview/creating-signatures).
 
@@ -54,7 +54,7 @@ hmacSha1.digest("key", "The quick brown fox jumps over the lazy dog") // de7c9b8
 ```
 
 ##### Note:
-If *key* or the *massage* contain backward slash the JS engine fill interpret it as a escape sequence character "\\", or in other words it will ignore it. So the funcion produces digest like there is no escape sequence character present.
+If *key* or the *massage* contain backward slash the JS engine will interpret it as a escape sequence character "\\", or in other words it will ignore it. So the funcion produces digest like there is no escape sequence character present.
 
 
 ```javascript
