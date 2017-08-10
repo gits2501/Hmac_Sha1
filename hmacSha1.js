@@ -37,7 +37,7 @@ catch(err){
       
        var opad_key = ""; // outer padded key
        var ipad_key = ""; // inner padded key
-       var kLen = this.byteLength(key); // length of key in bytes;
+       var kLen = this.oneByteChar(key); // length of key in bytes;
      
        if(kLen < this.blocksize){  
           var diff = this.blocksize - kLen; // diff is how mush  blocksize is bigger then the key
@@ -47,12 +47,12 @@ catch(err){
           key = this.hexToString(sha1(key)); // The hash of 40 hex chars(40bytes) convert to exact char mappings,
                                            // each char has codepoint from 0x00 to 0xff.Produces string of 20 bytes.
          
-          var hashedKeyLen =  this.byteLength(key); // take the length of key
+          var hashedKeyLen =  this.oneByteChar(key); // take the length of key
        }
       
     
        (function applyXor(){   // Reads one char, at the time, from key and applies XOR constants on it
-                               // acording to the byteLength of the key.
+                               // acording to the oneByteChar of the key.
          var o_zeroPaddedCode; // result from opading the zero byte
          var i_zeroPaddedCode; // res from ipading the zero byte
          var o_paddedCode;     // res from opading the char from key
@@ -75,7 +75,8 @@ catch(err){
                 ipad_key += String.fromCharCode(i_zeroPaddedCode);
               }
               else {
-                char = this.oneByteCharAt(key,j);     // take char from key, only one byte char
+                char = this.oneByteChar(key, j);     // take char from key, only one byte char
+                    //console.log("key: ",key,'j: ', j,'CHAR = '+ char, "char type: "+(typeof char));
                  charCode = char.codePointAt(0); // convert that char to number
                   
                  o_paddedCode =  charCode ^ opad; // XOR the char code with outer padding constant (opad)
@@ -101,28 +102,35 @@ catch(err){
      moreThenOne: 'More then 1 byte character detected, function aborted',
   }
   
-  HmacSha1.prototype.byteLength  = function (str){  // Counts characters only 1byte in length, of a string.
-                                                    // Very similar to oneByteChar().
-                                                    // For clarity 2 funtions are made.
-      var len = str.length;
-      var i = 0;
-      var byteLen = 0; // string byte lenght
+  HmacSha1.prototype.oneByteChar  = function (str, idx){  // Counts characters only 1byte in length, of a string.
+                                                         // Very similar to oneByteChar().
+     var len = str.length;                                                // For clarity 2 funtions are made.
       
-      for (i; i < len; i++){
-        var code = str.charCodeAt(i);              // Take single character from string
-        if(code >= 0x0 && code <= 0xff) byteLen++; // Check that it is only 1byte in length and increase counter
-        else{
-           throw new Error(this.messages.moreThenOne);
-           return;
+     var i = 0;
+     var code; 
+     for (i; i < len; i++){
+       if(idx >=0){                                     // Index argument is present                
+          if ((code = str.codePointAt(idx)) > 0xff){    // check for NON ascii code
+            throw new Error(this.messages.moreThenOne); // emit error
+            return;
+          }
+          else return str.charAt(idx)
+           // return ascii char at that index
+       }
+       else{                                           // index not present , we need to retrun lenght of string 
+          if (str.codePointAt(i) > 0xff){     // check for non ascii code
+            throw new Error(this.messages.moreThenOne);// emit error 
+            return;
+          }
         }
         
       }
       
-      return byteLen;
+      return len;  // returns byte length if all chars where in ascii code range
     
   }
   
-  HmacSha1.prototype.oneByteCharAt = function (str,idx){
+ /* HmacSha1.prototype.oneByteCharAt = function (str,idx){
        var code = str.codePointAt(idx);
        if(code >= 0x00 && code <= 0xff){ // we are interested at reading only one byte
           return str.charAt(idx); // return char.
@@ -132,7 +140,7 @@ catch(err){
        }
     
   };
-  
+  */
   HmacSha1.prototype.hexToString = function (sha1Output){ // Converts every pair of hex CHARS to their character
                                                           // conterparts.
                                                           // example1: "4e" is converted to char "N" 
