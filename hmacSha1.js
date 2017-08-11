@@ -58,7 +58,6 @@ catch(err){
          var o_paddedCode;     // res from opading the char from key
          var i_paddedCode;     // res from ipading the char from key
        
-         var char;     // Plaseholder for one char from key 
          var charCode; // Code, numeric represantation of char 
         
          for(var j = 0; j < this.blocksize; j++){ 
@@ -68,16 +67,14 @@ catch(err){
                                                         // be, apply XOR on zero byte and constants, result put
                                                         // in corresponding padding key. Or the key was too long
                                                         // and was hashed, then also we need to do same thing.
-                o_zeroPaddedCode = 0x00 ^ opad;  //XOR the zero byte with outer padding constant 
-                opad_key += String.fromCharCode(o_zeroPaddedCode); // convert result back to string
+                 o_zeroPaddedCode = 0x00 ^ opad;  //XOR the zero byte with outer padding constant 
+                 opad_key += String.fromCharCode(o_zeroPaddedCode); // convert result back to string
                  
-                i_zeroPaddedCode = 0x00 ^ ipad;
-                ipad_key += String.fromCharCode(i_zeroPaddedCode);
+                 i_zeroPaddedCode = 0x00 ^ ipad;
+                 ipad_key += String.fromCharCode(i_zeroPaddedCode);
               }
               else {
-                char = this.oneByteChar(key, j);     // take char from key, only one byte char
-                    //console.log("key: ",key,'j: ', j,'CHAR = '+ char, "char type: "+(typeof char));
-                 charCode = char.codePointAt(0); // convert that char to number
+                 charCode = this.oneByteChar(key, j);  // get code (number) of that char
                   
                  o_paddedCode =  charCode ^ opad; // XOR the char code with outer padding constant (opad)
                  opad_key += String.fromCharCode(o_paddedCode); // convert back code result to string
@@ -102,45 +99,32 @@ catch(err){
      moreThenOne: 'More then 1 byte character detected, function aborted',
   }
   
-  HmacSha1.prototype.oneByteChar  = function (str, idx){  // Counts characters only 1byte in length, of a string.
-                                                         // Very similar to oneByteChar().
-     var len = str.length;                                                // For clarity 2 funtions are made.
-      
-     var i = 0;
+  HmacSha1.prototype.oneByteChar  = function (str, idx){ // If only 'str' is supplied function returns length 
+                                                         // of str in bytes. If both arguments are there,
+                                                         // function returns code (number) representation of
+                                                         // character at index 'idx'.
      var code; 
-     for (i; i < len; i++){
-       if(idx >=0){                                     // Index argument is present                
-          if ((code = str.codePointAt(idx)) > 0xff){    // check for NON ascii code
-            throw new Error(this.messages.moreThenOne); // emit error
-            return;
+     if(idx >=0){                                        // Index argument is present                
+          if ((code = str.codePointAt(idx)) > 0xff){     // check for NON ascii code
+             throw new Error(this.messages.moreThenOne); // emit error
+             return;
           }
-          else return str.charAt(idx)
-           // return ascii char at that index
-       }
-       else{                                           // index not present , we need to retrun lenght of string 
-          if (str.codePointAt(i) > 0xff){     // check for non ascii code
+          else return code;                              // Return char
+          
+     }
+
+     var len = str.length;
+     for (var i = 0; i < len; i++){                    // Index not present , we need to retrun lenght of string 
+          if (str.codePointAt(i) > 0xff){              // check for non ascii code
             throw new Error(this.messages.moreThenOne);// emit error 
             return;
           }
-        }
-        
-      }
-      
-      return len;  // returns byte length if all chars where in ascii code range
+     }
+     
+     return len;  // returns byte length if all chars where in ascii code range
     
   }
-  
- /* HmacSha1.prototype.oneByteCharAt = function (str,idx){
-       var code = str.codePointAt(idx);
-       if(code >= 0x00 && code <= 0xff){ // we are interested at reading only one byte
-          return str.charAt(idx); // return char.
-       }    
-       else{ 
-          throw new Error(this.messages.moreThenOne)
-       }
     
-  };
-  */
   HmacSha1.prototype.hexToString = function (sha1Output){ // Converts every pair of hex CHARS to their character
                                                           // conterparts.
                                                           // example1: "4e" is converted to char "N" 
@@ -157,26 +141,25 @@ catch(err){
     var char;     // one character
     var result = ""; // result string 
       
-   for (var i = 0; i < sha1Output.length; i+=2){ // in steps by 2
-           l = sha1Output[i]; // take "left" char
+   for (var i = 0; i < sha1Output.length; i+=2){ // In steps by 2
+           l = sha1Output[i];                    // Take "left" char
            
-           if(typeof l === "number") lcode = parseInt(l); // parse the number
-           else if(typeof l === "string") lcode = parseInt(l,16); // take the code if char letter is hex number
-                                                                  // in set (a...f)
+           if(typeof l === "number") lcode = parseInt(l);         // Parse the number
+           else if(typeof l === "string") lcode = parseInt(l,16); // Take the code if char is hex number
+                                                                  // in range  (a...f);
            
-            shiftedL = lcode << 4 ; // shift it to left 4 places, gets filled in with 4 zeroes from the right
-            r = sha1Output[i+1];    // take next char
+            shiftedL = lcode << 4 ; // Shift it to left 4 places, gets filled in with 4 zeroes from the right
+            r = sha1Output[i+1];    // Take next char
            
-           if(typeof r === "number") rcode = parseInt(r); // parse the number
-           else if(typeof r === "string") rcode = parseInt(r,16); 
+           if(typeof r === "number") rcode = parseInt(r);         // Parse the number
+           else if(typeof r === "string") rcode = parseInt(r,16); // Take the code
            
-            bin = shiftedL | rcode; // 
-            char = String.fromCharCode(bin);
-            result += char;
+            bin = shiftedL | rcode; // bitwise OR. This is essantialy concatenation. One character from two. 
+            char = String.fromCharCode(bin); // convert it back to string
+            result += char;         // append to result string
      
             
     }
-    // console.log("|"+result+"|", result.length); // prints info, line can be deleted
      
     return result;
   }

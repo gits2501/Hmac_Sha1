@@ -48,7 +48,7 @@ test('oneByteChar',function(t){
 
    str = 'You must unlearn what you have learned';
    pos = 3;
-   t.equal(hmac.oneByteChar(str,3), ' ', 'one byte char at position ['+pos+'] should be " "');
+   t.equal(hmac.oneByteChar(str,3), 32, 'one byte char at position ['+pos+'] should be 32');
 
    str = "Greek letter Phi Φ";
    pos = str.length -1;
@@ -62,4 +62,17 @@ test('oneByteChar',function(t){
    t.end(); 
 })
 
+
+test('hexToString', function(t){
+   str = "34"
+   t.equals(hmac.hexToString(str), '4', 'Should return 4');
+   
+   str = "4e"
+   t.equals(hmac.hexToString(str), 'N', 'Should return N');
+  
+   str = "4e7057f9";
+   t.equals(hmac.hexToString(str), 'NpWù', 'Should return NpWù')
+   t.end()
+   
+})
 
