@@ -3,7 +3,7 @@
 
 In order to utilise many free APIs, communication with server needs authentication checks for the application that access it and for user in which name application makes the request. Lot's of API's still require [OAuth 1.0a](https://oauth.net/core/1.0a/#anchor15), where [HMAC_SHA1](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code#Implementation) is significant part, for that purpose. 
 
-This implementation of HMAC_SHA1 is to be used where `ArrayBuffer` is not an option for what ever reason. Hence it works only with *plain javascript strings*.
+This implementation of HMAC_SHA1 is to be used where `ArrayBuffer`/ `Buffer` is not an option for what ever reason. Hence it works only with *plain javascript strings*.
 
 ### Idea
 
@@ -27,10 +27,8 @@ That is char "N" is *exact mapping* of data that sha1 produced it is not hex str
 
 ## Usage
 
-In this repo there are two implementations of hmac_sha1, one uses behavior delegation pattern the other functional pattern. So you can pick what ever soothes your needs. Behaviour delegation  code uses custom implementation of private variables, more about that [here](https://stackoverflow.com/questions/32748078/variable-privacy-in-javascripts-behaviour-delegation-pattern/43476020#43476020).
+The `digest` function of an Hmac_Sha1 instance recives two arguments, `key` and `baseString`. Key must contain characters in ASCII code range, while baseString can be in UNICODE.
 
-
-Also both implementation use *Rusha.js* as sha1 function, all info you can find [here](https://github.com/srijs/rusha). You can use anything you want for sha1.  Also there are 3 functions, byteLength, hexToString, and oneByteChar for operations that hmacSha1 uses.
 #### Examples:
 In this example the key and message (baseString) for testing are used from [twitter api example](https://dev.twitter.com/oauth/overview/creating-signatures).
 
@@ -54,7 +52,7 @@ hmacSha1.digest("key", "The quick brown fox jumps over the lazy dog") // de7c9b8
 ```
 
 ##### Note:
-If *key* or the *massage* contain backward slash the JS engine will interpret it as a escape sequence character "\\", or in other words it will ignore it. So the funcion produces digest like there is no escape sequence character present.
+If *key* or the *massage* contain backward slash the JS engine will interpret it as a escape sequence character "\\", or in other words it will ignore it (depending of what subsequent char is). So the funcion produces digest like there is no escape sequence character present.
 
 
 ```javascript

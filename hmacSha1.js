@@ -12,20 +12,10 @@ try{
 
 }
 catch(err){
-   console.log('crypto is unavalable: '+ err);
-
-   sha1 = require('rusha.js'); 
-   sha1 = sha1.digest; 
+   console.log('core crypto lib is unavalable: '+ err);
 }
 
 
-  
-
-//var sha = new Rusha();   // this is where we make an "instance" of sha1 function
-                           // You can use whatever library you choose for sha1,
-                           // here we used Rusha.js
-//var sha1 = sha.digest;   
-  
   function HmacSha1(){
      this.blocksize = 64; // 64 when using these hash functions: SHA-1, MD5, RIPEMD-128/160 .
     
@@ -38,16 +28,18 @@ catch(err){
        var opad_key = ""; // outer padded key
        var ipad_key = ""; // inner padded key
        var kLen = this.oneByteChar(key); // length of key in bytes;
-     
+       var diff;
+       var hashedKeyLen;
+
        if(kLen < this.blocksize){  
-          var diff = this.blocksize - kLen; // diff is how mush  blocksize is bigger then the key
+           diff = this.blocksize - kLen; // diff is how mush  blocksize is bigger then the key
        }
       
        if(kLen > this.blocksize){ 
           key = this.hexToString(sha1(key)); // The hash of 40 hex chars(40bytes) convert to exact char mappings,
                                            // each char has codepoint from 0x00 to 0xff.Produces string of 20 bytes.
          
-          var hashedKeyLen =  this.oneByteChar(key); // take the length of key
+          hashedKeyLen =  this.oneByteChar(key); // take the length of key
        }
       
     
@@ -67,7 +59,7 @@ catch(err){
                                                         // be, apply XOR on zero byte and constants, result put
                                                         // in corresponding padding key. Or the key was too long
                                                         // and was hashed, then also we need to do same thing.
-                 o_zeroPaddedCode = 0x00 ^ opad;  //XOR the zero byte with outer padding constant 
+                 o_zeroPaddedCode = 0x00 ^ opad;  // XOR the zero byte with outer padding constant 
                  opad_key += String.fromCharCode(o_zeroPaddedCode); // convert result back to string
                  
                  i_zeroPaddedCode = 0x00 ^ ipad;
@@ -114,14 +106,14 @@ catch(err){
      }
 
      var len = str.length;
-     for (var i = 0; i < len; i++){                    // Index not present , we need to retrun lenght of string 
+     for (var i = 0; i < len; i++){                    // Index not present , we need to return length of string 
           if (str.codePointAt(i) > 0xff){              // check for non ascii code
             throw new Error(this.messages.moreThenOne);// emit error 
             return;
           }
      }
      
-     return len;  // returns byte length if all chars where in ascii code range
+     return len;                                    // returns byte length if all chars where in ascii code range
     
   }
     

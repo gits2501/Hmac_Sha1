@@ -2,9 +2,7 @@ var test = require('tap').test;
 var HmacSha1 = require('../hmacSha1');
 
 var hmac = new HmacSha1();
-for (var name in hmac){
-      console.log(name);
- }
+
 var key;
 var baseStr;
 var result;
@@ -54,7 +52,7 @@ test('oneByteChar',function(t){
    pos = str.length -1;
    func = hmac.oneByteChar.bind(hmac, [str,pos]);
   
-   t.throws(func ,hmac.messages.moreThenOne, 'Should throw new Error with informative string');
+   t.throws(func ,hmac.messages.moreThenOne, 'Should throw new Error with informative message');
 
    str =  "He who breaks a thing to find out what it is has left the path of wisdom";
    
