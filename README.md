@@ -27,7 +27,7 @@ That is char "N" is *exact mapping* of data that sha1 produced it is not hex str
 
 ## Usage
 
-The `digest` function of an Hmac_Sha1 instance recives two arguments, `key` and `baseString`. Key must contain characters in ASCII code range, while baseString can be in UNICODE.
+The `digest` function of an Hmac_Sha1 instance receives two arguments, `key` and `baseString`. Key must contain characters in _ascii_ code range, while baseString can be in _unicode_.
 
 #### Examples:
 In this example the key and message (baseString) for testing are used from [twitter api example](https://dev.twitter.com/oauth/overview/creating-signatures).

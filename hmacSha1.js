@@ -37,20 +37,20 @@ catch(err){
       
        if(kLen > this.blocksize){ 
           key = this.hexToString(sha1(key)); // The hash of 40 hex chars(40bytes) convert to exact char mappings,
-                                           // each char has codepoint from 0x00 to 0xff.Produces string of 20 bytes.
+                                        // each char has codepoint from 0x00 to 0xff.Produces string of 20 bytes.
          
-          hashedKeyLen =  this.oneByteChar(key); // take the length of key
+          hashedKeyLen =  key.length; // take the length of key
        }
       
     
        (function applyXor(){   // Reads one char, at the time, from key and applies XOR constants on it
-                               // acording to the oneByteChar of the key.
+                               // acording to the length of the key.
          var o_zeroPaddedCode; // result from opading the zero byte
          var i_zeroPaddedCode; // res from ipading the zero byte
          var o_paddedCode;     // res from opading the char from key
          var i_paddedCode;     // res from ipading the char from key
        
-         var charCode; // Code, numeric represantation of char 
+         var charCode;         // Code, numeric represantation of char 
         
          for(var j = 0; j < this.blocksize; j++){ 
                
@@ -66,7 +66,7 @@ catch(err){
                  ipad_key += String.fromCharCode(i_zeroPaddedCode);
               }
               else {
-                 charCode = this.oneByteChar(key, j);  // get code (number) of that char
+                 charCode = key.codePointAt(j);   // get code (number) of that char
                   
                  o_paddedCode =  charCode ^ opad; // XOR the char code with outer padding constant (opad)
                  opad_key += String.fromCharCode(o_paddedCode); // convert back code result to string
@@ -79,16 +79,18 @@ catch(err){
   
               
           }
-       //   console.log("opad_key: ", "|"+opad_key+"|", "\nipad_key: ", "|"+ipad_key+"|"); // Prints opad and
+          console.log("opad_key: ", "|"+opad_key+"|",' len: '+ opad_key.length, "\nipad_key: ", "|"+ipad_key+"|", " len: "+ipad_key.length); // Prints opad and
                                                                                 // ipad key, line can be deleted.
        }.bind(this))() // binding "this" reference in applyXor to each "instance" of HmacSha1  
-   
+          console.log("baseString:|"+baseString);
+          console.log("sha 1: ipad_key + baseString: |"+ (ipad_key + baseString));
+          console.log("sha1: "+ sha1(ipad_key + baseString)); 
          return sha1(opad_key + this.hexToString(sha1(ipad_key + baseString))) ;
       
      }
   }
   HmacSha1.prototype.messages = {
-     moreThenOne: 'More then 1 byte character detected, function aborted',
+     nonAscii: 'Non ASCII code detected, function aborted'
   }
   
   HmacSha1.prototype.oneByteChar  = function (str, idx){ // If only 'str' is supplied function returns length 
@@ -96,24 +98,15 @@ catch(err){
                                                          // function returns code (number) representation of
                                                          // character at index 'idx'.
      var code; 
-     if(idx >=0){                                        // Index argument is present                
-          if ((code = str.codePointAt(idx)) > 0xff){     // check for NON ascii code
-             throw new Error(this.messages.moreThenOne); // emit error
-             return;
-          }
-          else return code;                              // Return char
-          
-     }
-
      var len = str.length;
      for (var i = 0; i < len; i++){                    // Index not present , we need to return length of string 
-          if (str.codePointAt(i) > 0xff){              // check for non ascii code
-            throw new Error(this.messages.moreThenOne);// emit error 
+          if ((code = str.codePointAt(i)) > 0xff){              // check for non ascii code
+            throw new Error(this.messages.nonAscii + ": " + String.fromCharCode(code) );// emit error 
             return;
           }
      }
      
-     return len;                                    // returns byte length if all chars where in ascii code range
+     return len;                                    // returns byte length if all chars in ascii code range
     
   }
     
