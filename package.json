@@ -1,6 +1,6 @@
 {
   "name": "hmac_sha1",
-  "version": "0.1.0",
+  "version": "0.1.0-beta",
   "description": "Implementation of HMAC algorithm in javascript with plain javascript strings, using SHA1 as underline hash functon.",
   "main": "hmacSha1.js",
   "scripts": {
@@ -16,10 +16,11 @@
   "bugs":{
       "url": "https://github.com/gits2501/Hmac_Sha1/issues"
    },
-   "keywords": ["authentication", "HMAC"],
+  "keywords": ["authentication", "HMAC", "signature"],
   "license": "MIT",
-   "files":["test"],
-   "devDependencies":{
+  "files":["test"],
+  "devDependencies":{
       "tap": "*"
-    }
+   }
+
 }

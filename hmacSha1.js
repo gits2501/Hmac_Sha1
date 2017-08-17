@@ -4,9 +4,9 @@ var sha1;
 try{
   crypto = require('crypto');
   
-   sha1 = function(str){
+   sha1 = function(str, enc){
       hash = crypto.createHash('sha1');
-      hash.update(str)
+      hash.update(str, enc)
       return  hash.digest('hex');
    }
 
@@ -23,23 +23,25 @@ catch(err){
      var ipad = 0x36; // inner padding contant = (0x36). And 0x36 is hexadecimal for char "6".
                       // We made both constants private.
      
-     this.digest =  function (key, baseString){ // the actual hmac_sha1 function
+     this.digest =  function (key, baseString, enc){ // the actual digest function
       
        var opad_key = ""; // outer padded key
        var ipad_key = ""; // inner padded key
-       var kLen = this.oneByteChar(key); // length of key in bytes;
+       var kLen = this.byteLength(key,enc); // length of key in bytes;
        var diff;
        var hashedKeyLen;
 
        if(kLen < this.blocksize){  
            diff = this.blocksize - kLen; // diff is how mush  blocksize is bigger then the key
+           console.log('kLen: '+ kLen);
        }
       
        if(kLen > this.blocksize){ 
-          key = this.hexToString(sha1(key)); // The hash of 40 hex chars(40bytes) convert to exact char mappings,
-                                        // each char has codepoint from 0x00 to 0xff.Produces string of 20 bytes.
+          key = this.hexToString(sha1(key, enc)); // The hash of 40 hex chars(40bytes) convert to exact char 
+                                                  // mappings, each char has codepoint from 0x00 to 0xff.
+                                                  // Produces string of 20 bytes.
          
-          hashedKeyLen =  key.length; // take the length of key
+          hashedKeyLen =  key.length;             // Take the length of key
        }
       
     
@@ -82,10 +84,10 @@ catch(err){
           console.log("opad_key: ", "|"+opad_key+"|",' len: '+ opad_key.length, "\nipad_key: ", "|"+ipad_key+"|", " len: "+ipad_key.length); // Prints opad and
                                                                                 // ipad key, line can be deleted.
        }.bind(this))() // binding "this" reference in applyXor to each "instance" of HmacSha1  
-          console.log("baseString:|"+baseString);
           console.log("sha 1: ipad_key + baseString: |"+ (ipad_key + baseString));
           console.log("sha1: "+ sha1(ipad_key + baseString)); 
-         return sha1(opad_key + this.hexToString(sha1(ipad_key + baseString))) ;
+          console.log("sha1(with enc): "+ sha1(ipad_key + baseString, enc)); 
+         return sha1(opad_key + this.hexToString(sha1(ipad_key + baseString, enc))) ;
       
      }
   }
@@ -93,20 +95,41 @@ catch(err){
      nonAscii: 'Non ASCII code detected, function aborted'
   }
   
-  HmacSha1.prototype.oneByteChar  = function (str, idx){ // If only 'str' is supplied function returns length 
+  HmacSha1.prototype.byteLength  = function (str, enc){ // If only 'str' is supplied function returns length 
                                                          // of str in bytes. If both arguments are there,
                                                          // function returns code (number) representation of
                                                          // character at index 'idx'.
-     var code; 
-     var len = str.length;
-     for (var i = 0; i < len; i++){                    // Index not present , we need to return length of string 
-          if ((code = str.codePointAt(i)) > 0xff){              // check for non ascii code
-            throw new Error(this.messages.nonAscii + ": " + String.fromCharCode(code) );// emit error 
-            return;
-          }
+     var bytes = 0, 
+         len = str.length,
+         i, 
+         charCode;
+         
+     for (i = 0; i < len; i++){
+           
+         charCode = String.fromCharCode(str[i]); // take char code from i-th place 
+         if(charCode <= 0xff){   // 1 byte
+              bytes++;
+              continue;
+         }
+
+         if(charCode <= 0xffff){ // 2
+              bytes+=2; 
+              continue;
+         }
+         
+         if(charCode <=0xffffff){// 3
+              bytes+=3;
+               
+         }
+         else bytes+=4;          // 4
      }
-     
-     return len;                                    // returns byte length if all chars in ascii code range
+
+     console.log('buffer length: ', Buffer.byteLength(str, enc));
+     console.log('normal length: ', str.length) 
+     console.log('mine: '+ bytes * 2);
+     return Buffer.byteLength(str,enc);// bytes * 2 ; // and since javascript takes 2 bytes to store every character, we are multiplying by 2
+
+    
     
   }
     
@@ -140,7 +163,7 @@ catch(err){
            else if(typeof r === "string") rcode = parseInt(r,16); // Take the code
            
             bin = shiftedL | rcode; // bitwise OR. This is essantialy concatenation. One character from two. 
-            char = String.fromCharCode(bin); // convert it back to string
+            char = String.fromCodePoint(bin); // convert it back to string
             result += char;         // append to result string
      
             
