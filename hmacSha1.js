@@ -24,16 +24,17 @@ catch(err){
                       // We made both constants private.
      
      this.digest =  function (key, baseString, enc){ // the actual digest function
-      
+      console.log(enc) 
        var opad_key = ""; // outer padded key
        var ipad_key = ""; // inner padded key
-       var kLen = this.byteLength(key,enc); // length of key in bytes;
+       var kLen = (enc === "latin-1"  || enc ==="utf8") ? this.asciiOnly(key): key.length ; // ascii in key only
+                                                                               // if non ascii encoding is 
+                                                                               // specified.
        var diff;
        var hashedKeyLen;
 
        if(kLen < this.blocksize){  
            diff = this.blocksize - kLen; // diff is how mush  blocksize is bigger then the key
-           console.log('kLen: '+ kLen);
        }
       
        if(kLen > this.blocksize){ 
@@ -51,8 +52,7 @@ catch(err){
          var i_zeroPaddedCode; // res from ipading the zero byte
          var o_paddedCode;     // res from opading the char from key
          var i_paddedCode;     // res from ipading the char from key
-       
-         var charCode;         // Code, numeric represantation of char 
+         var code;             //  Numeric represantation of char 
         
          for(var j = 0; j < this.blocksize; j++){ 
                
@@ -62,19 +62,21 @@ catch(err){
                                                         // in corresponding padding key. Or the key was too long
                                                         // and was hashed, then also we need to do same thing.
                  o_zeroPaddedCode = 0x00 ^ opad;  // XOR the zero byte with outer padding constant 
-                 opad_key += String.fromCharCode(o_zeroPaddedCode); // convert result back to string
-                 
+                 opad_key += String.fromCodePoint(o_zeroPaddedCode); // convert result back to string
+                                                                     // using ".fromCodePoint()" so it can 
+                                                                     // correctly return codes from chars in 
+                                                                     // astral plane( > U+)
                  i_zeroPaddedCode = 0x00 ^ ipad;
-                 ipad_key += String.fromCharCode(i_zeroPaddedCode);
+                 ipad_key += String.fromCodePoint(i_zeroPaddedCode);
               }
               else {
-                 charCode = key.codePointAt(j);   // get code (number) of that char
+                 code = key.codePointAt(j);   // get code (number) of that char
                   
-                 o_paddedCode =  charCode ^ opad; // XOR the char code with outer padding constant (opad)
-                 opad_key += String.fromCharCode(o_paddedCode); // convert back code result to string
+                 o_paddedCode =  code ^ opad; // XOR the char code with outer padding constant (opad)
+                 opad_key += String.fromCodePoint(o_paddedCode); // convert back code result to string
                   
-                 i_paddedCode = charCode ^ ipad;  // XOR with the inner padding constant (ipad)
-                 ipad_key += String.fromCharCode(i_paddedCode);
+                 i_paddedCode = code ^ ipad;  // XOR with the inner padding constant (ipad)
+                 ipad_key += String.fromCodePoint(i_paddedCode);
                
               }
             
@@ -92,42 +94,27 @@ catch(err){
      }
   }
   HmacSha1.prototype.messages = {
-     nonAscii: 'Non ASCII code detected, function aborted'
+     nonAscii: 'Key must contain only ascii code.'
   }
   
-  HmacSha1.prototype.byteLength  = function (str, enc){ // If only 'str' is supplied function returns length 
+  HmacSha1.prototype.asciiOnly  = function (str){ // If only 'str' is supplied function returns length 
                                                          // of str in bytes. If both arguments are there,
                                                          // function returns code (number) representation of
                                                          // character at index 'idx'.
-     var bytes = 0, 
-         len = str.length,
-         i, 
-         charCode;
-         
-     for (i = 0; i < len; i++){
-           
-         charCode = String.fromCharCode(str[i]); // take char code from i-th place 
-         if(charCode <= 0xff){   // 1 byte
-              bytes++;
-              continue;
+     var len = str.length,
+         code,
+         i;
+     for(i = 0; i < len; i++){
+       
+         code = str.codePointAt(i);
+         if(code > 0x7f){              // check non ascii code
+           throw new Error(this.messages.nonAscii +" Char outside range is: " + String.fromCodePoint(code))
+           return;
          }
-
-         if(charCode <= 0xffff){ // 2
-              bytes+=2; 
-              continue;
-         }
-         
-         if(charCode <=0xffffff){// 3
-              bytes+=3;
-               
-         }
-         else bytes+=4;          // 4
+    
      }
-
-     console.log('buffer length: ', Buffer.byteLength(str, enc));
-     console.log('normal length: ', str.length) 
-     console.log('mine: '+ bytes * 2);
-     return Buffer.byteLength(str,enc);// bytes * 2 ; // and since javascript takes 2 bytes to store every character, we are multiplying by 2
+     
+     return len;  // if all ok, return length (number of chars);
 
     
     

@@ -3,8 +3,6 @@
 
 In order to utilise many free APIs, communication with server needs authentication checks for the application that access it and for user in which name application makes the request. Lot's of API's still require [OAuth 1.0a](https://oauth.net/core/1.0a/#anchor15), where [HMAC_SHA1](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code#Implementation) is significant part, for that purpose. 
 
-This implementation of HMAC_SHA1 is to be used where `ArrayBuffer`/ `Buffer` is not an option for what ever reason. Hence it works only with *plain javascript strings*.
-
 ### Idea
 
 It seems that sha1 functions by default return string of 40 hex chars that is just, well *hex string representation* of underlying data, not the data itself. Meaning if sha1 produces data stream of, for example:
