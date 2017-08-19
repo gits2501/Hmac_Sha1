@@ -7,13 +7,13 @@ var key;
 var baseStr;
 var result;
 
-test('digest', function(t){
+test('digest /result in hex format/', function(t){
 
 
   key = 'key';
   baseStr = 'The quick brown fox jumps over the lazy dog' // it goes 'The quick brown fox jumps over a lazy dog'
-                                                          // but '..the lazy dog' is example from wiki, so will 
-                                                          // stick to it.
+                                                          // but '..the lazy dog' is reference example from wiki
+                                                          // HMAC page, so will stick to it.
   result = hmac.digest(key, baseStr);
  // 1
   t.equal(result, 'de7c9b85b8b78aa6bc8a7a36f70a90701c9db4d9','Should be  equal to "de7c9...b4d9" ');
@@ -64,19 +64,37 @@ test('digest', function(t){
   baseStr = 'The quick brown fox jumps over the lazy dog¶汉字💩'; // grave sign(latin-1), chinese chars, 
                                                                  // and one astral char (pile of poo) at the end
   result = hmac.digest(key, baseStr)
-
+// 9
   t.equal(result, 'fa847bdf510da1df8869100250ad5385be219f7d', 'Should be equal to fa84...9f7d');
 
 t.end();
 });
 
+test('digest /result in base64 format/', function(t){
+
+  hmac = new HmacSha1('base64');
+
+  key = 'key';
+  baseStr = 'The quick brown fox jumps over the lazy dog'
+  result = hmac.digest(key, baseStr);
+
+ // 1
+  t.equals(result, '3nybhbi3iqa8ino29wqQcBydtNk=', 'Should be equal to 3nyb...tNk=');
+  
+  // same key
+  baseStr =  'The quick brown fox jumps over the lazy dog¶汉字💩';
+  result = hmac.digest(key, baseStr, 'utf8') // with explicit encoding 
+ // 2
+  t.equals(result, 'LYsDRV73mlS0VAkq5WSr915Nnu4=', 'Should be equal to LYsD...nu4=')
+  t.end();
+  
+})
+
 
 var func;
 
 test('asciiOnly',function(t){
-
   
-
    key =  "He who breaks a thing to find out what it is has left the path of wisdom";
    
    t.equals(hmac.asciiOnly(key), key.length, 'Should return byte length of ['+key.length+']');

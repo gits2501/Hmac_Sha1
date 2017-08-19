@@ -4,10 +4,11 @@ var sha1;
 try{
   crypto = require('crypto');
   
-   sha1 = function(str, enc){
-      hash = crypto.createHash('sha1');
-      hash.update(str, enc)
-      return  hash.digest('hex');
+   sha1 = function(key,enc, format){
+      var hash = crypto.createHash('sha1');
+      hash.update(key, enc);
+      format = format || 'hex'; // defaults to hex,
+      return  hash.digest(format);
    }
 
 }
@@ -16,8 +17,8 @@ catch(err){
 }
 
 
-  function HmacSha1(){
-     this.blocksize = 64; // 64 when using these hash functions: SHA-1, MD5, RIPEMD-128/160 .
+  function HmacSha1(format){ // Format of hmac result (defaults to 'hex', can be 'base64')
+     this.blocksize = 64;    // 64 when using these hash functions: SHA-1, MD5, RIPEMD-128/160 .
     
      var opad = 0x5c; // outer padding  constant = (0x5c) . And 0x5c is just hexadecimal for backward slash "\" 
      var ipad = 0x36; // inner padding contant = (0x36). And 0x36 is hexadecimal for char "6".
@@ -27,14 +28,14 @@ catch(err){
       console.log(enc) 
        var opad_key = ""; // outer padded key
        var ipad_key = ""; // inner padded key
-       var kLen = (enc === "latin-1"  || enc ==="utf8") ? this.asciiOnly(key): key.length ; // ascii in key only
-                                                                               // if non ascii encoding is 
-                                                                               // specified.
+       var kLen = (enc === 'latin-1' || enc === 'utf8') ? this.asciiOnly(key) : key.length; // enforce ascii in
+                                                                                     // key, only  if non ascii 
+                                                                                     // encoding specified.
        var diff;
        var hashedKeyLen;
 
        if(kLen < this.blocksize){  
-           diff = this.blocksize - kLen; // diff is how mush  blocksize is bigger then the key
+           diff = this.blocksize - kLen;          // diff is how much blocksize is bigger then the key
        }
       
        if(kLen > this.blocksize){ 
@@ -88,9 +89,10 @@ catch(err){
        }.bind(this))() // binding "this" reference in applyXor to each "instance" of HmacSha1  
           console.log("sha 1: ipad_key + baseString: |"+ (ipad_key + baseString));
           console.log("sha1: "+ sha1(ipad_key + baseString)); 
-          console.log("sha1(with enc): "+ sha1(ipad_key + baseString, enc)); 
-         return sha1(opad_key + this.hexToString(sha1(ipad_key + baseString, enc))) ;
-      
+          console.log("sha1(with enc): "+ sha1(ipad_key + baseString, enc));
+       var stringify = this.hexToString(sha1(ipad_key + baseString, enc));// convert sha1 hex to character string 
+       if(format === 'base64') return sha1(opad_key + stringify, '', format); // pass format as third arg
+       else return sha1(opad_key + stringify); 
      }
   }
   HmacSha1.prototype.messages = {
@@ -98,9 +100,9 @@ catch(err){
   }
   
   HmacSha1.prototype.asciiOnly  = function (str){ // If only 'str' is supplied function returns length 
-                                                         // of str in bytes. If both arguments are there,
-                                                         // function returns code (number) representation of
-                                                         // character at index 'idx'.
+                                                  // of str in bytes. If both arguments are there,
+                                                  // function returns code (number) representation of
+                                                  // character at index 'idx'.
      var len = str.length,
          code,
          i;

@@ -1,6 +1,6 @@
 {
   "name": "hmac_sha1",
-  "version": "0.1.0-beta",
+  "version": "0.1.0-beta.1",
   "description": "Implementation of HMAC algorithm in javascript with plain javascript strings, using SHA1 as underline hash functon.",
   "main": "hmacSha1.js",
   "scripts": {
