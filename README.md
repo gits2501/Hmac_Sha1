@@ -25,14 +25,13 @@ So we cant use different data then what sha1 has really produced, what we can do
 In this context it's good to think that sha1 spits out hex string by treating every 4 bits of underlying data, a *nibble*. And that we compress that string by mapping 8 bits of data to their string representation.
 
 That is char "N" is *exact mapping* of data that sha1 produced it is not hex string representation of data. If we have 40 hex chars that means 40 bytes and by [SHA1 rfc](https://tools.ietf.org/html/rfc2104), sha1 produces 20 byte data. By doing this conversion we get that 20 byte data and all the time we are using strings with same effect if we were using ArrayBuffer/Buffer, at least that's the idea
+## Installation
+#### node.js
+`npm install hmac_sha1`
 
 ## Usage
 
 The `digest` function of an Hmac_Sha1 instance receives three arguments, `key` , `baseString` and optional `enc`-oding.
-
-### Installation
-#### node.js
-`npm install hmac_sha1`
 
 ### Examples:
 In this example the key and message (baseString) for testing are used from [twitter api example](https://dev.twitter.com/oauth/overview/creating-signatures).
