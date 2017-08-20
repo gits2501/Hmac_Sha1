@@ -5,10 +5,10 @@ try{
   crypto = require('crypto');
   
    sha1 = function(key,enc, format){
-      var hash = crypto.createHash('sha1');
-      hash.update(key, enc);
-      format = format || 'hex'; // defaults to hex,
-      return  hash.digest(format);
+      var hash = crypto.createHash('sha1'); // create instance of sha1
+      hash.update(key, enc);                // feed data to it, specify encoding
+      format = format || 'hex';             // defaults to hex,
+      return  hash.digest(format);          // return result specified format
    }
 
 }
@@ -25,13 +25,13 @@ catch(err){
                       // We made both constants private.
      
      this.digest =  function (key, baseString, enc){ // the actual digest function
-      console.log(enc) 
+
        var opad_key = ""; // outer padded key
        var ipad_key = ""; // inner padded key
        var kLen = (enc === 'latin-1' || enc === 'utf8') ? this.asciiOnly(key) : key.length; // enforce ascii in
                                                                                      // key, only  if non ascii 
-                                                                                     // encoding specified.
-       var diff;
+                                                                                    // encoding specified.
+       var diff;         
        var hashedKeyLen;
 
        if(kLen < this.blocksize){  
@@ -42,7 +42,6 @@ catch(err){
           key = this.hexToString(sha1(key, enc)); // The hash of 40 hex chars(40bytes) convert to exact char 
                                                   // mappings, each char has codepoint from 0x00 to 0xff.
                                                   // Produces string of 20 bytes.
-         
           hashedKeyLen =  key.length;             // Take the length of key
        }
       
@@ -66,7 +65,7 @@ catch(err){
                  opad_key += String.fromCodePoint(o_zeroPaddedCode); // convert result back to string
                                                                      // using ".fromCodePoint()" so it can 
                                                                      // correctly return codes from chars in 
-                                                                     // astral plane( > U+)
+                                                                     // higher unicode plains
                  i_zeroPaddedCode = 0x00 ^ ipad;
                  ipad_key += String.fromCodePoint(i_zeroPaddedCode);
               }
@@ -80,36 +79,29 @@ catch(err){
                  ipad_key += String.fromCodePoint(i_paddedCode);
                
               }
-            
-  
-              
           }
-          console.log("opad_key: ", "|"+opad_key+"|",' len: '+ opad_key.length, "\nipad_key: ", "|"+ipad_key+"|", " len: "+ipad_key.length); // Prints opad and
-                                                                                // ipad key, line can be deleted.
+         // console.log("opad_key: ", "|"+opad_key+"|",' len: '+ opad_key.length, "\nipad_key: ", "|"+ipad_key+"|", " len: "+ipad_key.length); // Prints opad and  ipad key, line can be deleted.
        }.bind(this))() // binding "this" reference in applyXor to each "instance" of HmacSha1  
-          console.log("sha 1: ipad_key + baseString: |"+ (ipad_key + baseString));
-          console.log("sha1: "+ sha1(ipad_key + baseString)); 
-          console.log("sha1(with enc): "+ sha1(ipad_key + baseString, enc));
+        
        var stringify = this.hexToString(sha1(ipad_key + baseString, enc));// convert sha1 hex to character string 
        if(format === 'base64') return sha1(opad_key + stringify, '', format); // pass format as third arg
        else return sha1(opad_key + stringify); 
      }
   }
+
   HmacSha1.prototype.messages = {
      nonAscii: 'Key must contain only ascii code.'
   }
   
-  HmacSha1.prototype.asciiOnly  = function (str){ // If only 'str' is supplied function returns length 
-                                                  // of str in bytes. If both arguments are there,
-                                                  // function returns code (number) representation of
-                                                  // character at index 'idx'.
+  HmacSha1.prototype.asciiOnly  = function (str){ // Checks for ascii code, if ok, returns number of characters
+                                                  // in str  
      var len = str.length,
          code,
          i;
      for(i = 0; i < len; i++){
        
          code = str.codePointAt(i);
-         if(code > 0x7f){              // check non ascii code
+         if(code > 0x7f){                         // check non ascii code
            throw new Error(this.messages.nonAscii +" Char outside range is: " + String.fromCodePoint(code))
            return;
          }
@@ -117,9 +109,6 @@ catch(err){
      }
      
      return len;  // if all ok, return length (number of chars);
-
-    
-    
   }
     
   HmacSha1.prototype.hexToString = function (sha1Output){ // Converts every pair of hex CHARS to their character
@@ -151,7 +140,7 @@ catch(err){
            if(typeof r === "number") rcode = parseInt(r);         // Parse the number
            else if(typeof r === "string") rcode = parseInt(r,16); // Take the code
            
-            bin = shiftedL | rcode; // bitwise OR. This is essantialy concatenation. One character from two. 
+            bin = shiftedL | rcode; // Bitwise OR. This is essantialy concatenation. One character from two. 
             char = String.fromCodePoint(bin); // convert it back to string
             result += char;         // append to result string
      
