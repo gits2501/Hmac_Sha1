@@ -12,7 +12,10 @@
     "email":"telhurat@hotmail.com",
     "url": "https://github.com/gits2501"
   },
-  "repository":"https://github.com/gits2501/Hmac_Sha1.git",
+  "repository":{
+    "type": "git",
+     "url":"https://github.com/gits2501/Hmac_Sha1.git"
+  },
   "bugs":{
       "url": "https://github.com/gits2501/Hmac_Sha1/issues"
    },
