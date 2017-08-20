@@ -30,6 +30,10 @@ That is char "N" is *exact mapping* of data that sha1 produced it is not hex str
 
 The `digest` function of an Hmac_Sha1 instance receives three arguments, `key` , `baseString` and optional `enc`-oding.
 
+### Installation
+#### node.js
+`npm install hmac_sha1`
+
 ### Examples:
 In this example the key and message (baseString) for testing are used from [twitter api example](https://dev.twitter.com/oauth/overview/creating-signatures).
 
