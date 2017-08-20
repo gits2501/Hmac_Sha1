@@ -67,7 +67,7 @@ hmacSha1 = new HmacSha1('base64');
 hmacSha1.digest('key', 'The quick brown fox jumps over the lazy dog¶汉字💩', 'utf8'); // LYsDRV73mlS0VAkq5WSr915Nnu4=                                                                            
 ```
 ##### Caviat
-But, when you are using 'utf8' encoding your key must be in ascii code. Basicaly it means that only your baseString (message) is allowed to have non ascii chars. If that's not the case function throws an error:
+But, when you are using 'utf8' encoding your `key` must be in ascii code. Basicaly it means that only your baseString (message) is allowed to have non ascii chars. If that's not the case function throws an error:
 ```javascript
 hmacSha1 = HmacSha1();
 hmac.digest('key¶汉字','The quick brow fox jumps over the lazy dog¶汉字💩', 'utf8' ) // Error 
