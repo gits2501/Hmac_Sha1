@@ -3,7 +3,8 @@
 
 In order to utilise many free APIs, communication with server needs authentication checks for the application that access it and for user in which name application makes the request. Lot's of API's still require [OAuth 1.0a](https://oauth.net/core/1.0a/#anchor15), where [HMAC_SHA1](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code#Implementation) is significant part, for that purpose. 
 
-This implementation of HMAC_SHA1 is to be used where `ArrayBuffer`/ `Buffer` is not an option for what ever reason. Hence it works only with *plain javascript strings*.
+This implementation uses only plain javascript strings so that is what it expects to pass it. Although sha1 function from nodes core crypto lib which this implementation depends uppon does use Buffers.
+ Also, this hmac uses *ES6* `String.fromCodePoint(..)` to correctly map code points of higher unicode plains. 
 
 ### Idea
 
@@ -23,13 +24,13 @@ So we cant use different data then what sha1 has really produced, what we can do
 
 In this context it's good to think that sha1 spits out hex string by treating every 4 bits of underlying data, a *nibble*. And that we compress that string by mapping 8 bits of data to their string representation.
 
-That is char "N" is *exact mapping* of data that sha1 produced it is not hex string representation of data. If we have 40 hex chars that means 40 bytes and by [SHA1 rfc](https://tools.ietf.org/html/rfc2104), sha1 produces 20 byte data. By doing this conversion we get that 20 byte data and all the time we are using strings with same effect if we were using ArrayBuffer, at least that's the idea.
+That is char "N" is *exact mapping* of data that sha1 produced it is not hex string representation of data. If we have 40 hex chars that means 40 bytes and by [SHA1 rfc](https://tools.ietf.org/html/rfc2104), sha1 produces 20 byte data. By doing this conversion we get that 20 byte data and all the time we are using strings with same effect if we were using ArrayBuffer/Buffer, at least that's the idea
 
 ## Usage
 
-The `digest` function of an Hmac_Sha1 instance recives two arguments, `key` and `baseString`. Key must contain characters in ASCII code range, while baseString can be in UNICODE.
+The `digest` function of an Hmac_Sha1 instance receives three arguments, `key` , `baseString` and optional `enc`-oding.
 
-#### Examples:
+### Examples:
 In this example the key and message (baseString) for testing are used from [twitter api example](https://dev.twitter.com/oauth/overview/creating-signatures).
 
 ```javascript
@@ -42,15 +43,35 @@ hmacSha1 = new HmacSha1();
 hmacSha1.digest(key, baseStr) //   b679c0af18f4e9c587ab8e200acd4e48a93f8cb6
 ```
 
-
+#### Normal
 [Wiki example](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code#Examples):
 
-
+In most cases you are good with default usage:
 ```javascript
-hmacSha1 = new HmacSha1();
+hmacSha1 = new HmacSha1(); // no result encoding specified, defaults to 'hex'
 hmacSha1.digest("key", "The quick brown fox jumps over the lazy dog") // de7c9b85b8b78aa6bc8a7a36f70a90701c9db4d9
 ```
+#### base64
+If you want result in base64:
+```javascript
+hmacSha1 = new HmacSha1('base64'); // put format in constructor call
+hmacSha1.digest("key", "The quick brown fox jumps over the lazy dog"); // 3nybhbi3iqa8ino29wqQcBydtNk=
+```
+#### utf8
+You can use 'utf8' encoding:
+```javascript
+hmacSha1 = new HmacSha1('base64');
+hmacSha1.digest('key', 'The quick brown fox jumps over the lazy dog¶汉字💩', 'utf8'); // LYsDRV73mlS0VAkq5WSr915Nnu4=                                                                            
+```
+##### Caviat
+But, when you are using 'utf8' encoding your key must be in ascii code. Basicaly it means that only your baseString (message) is allowed to have non ascii chars. If that's not the case function throws an error:
+```javascript
+hmacSha1 = HmacSha1();
+hmac.digest('key¶汉字','The quick brow fox jumps over the lazy dog¶汉字💩', 'utf8' ) // Error 
 
+hmac.digest('key','The quick brow fox jumps over the lazy dog¶汉字💩', 'utf8' ) // LYsDRV73mlS0VAkq5WSr915Nnu4=
+
+```
 ##### Note:
 If *key* or the *massage* contain backward slash the JS engine will interpret it as a escape sequence character "\\", or in other words it will ignore it (depending of what subsequent char is). So the funcion produces digest like there is no escape sequence character present.
 
@@ -67,8 +88,8 @@ So we need to escape each backward slash like so:
 ```javascript
 hmacSha1 = new HmacSha1();
 hmacSha1.digest("ke\\y", "So\\me mess\\age") // 136d22549e17ee6665dc398bbba43c5e912e3e92
-// Result is like we passed "ke\y" and "So\me messs\age"
+// Result is like we passed "ke\y" and "So\me mess\age"
 ```
 You can test keys and messages [here](https://jsfiddle.net/dzh5euo4/3/)(open console) in jsfiddle. 
-And a [reference point](https://caligatio.github.io/jsSHA/) so you can see it complies with other implementations of HMAC_SHA1.
+And a [reference point](https://caligatio.github.io/jsSHA/) so you can see it complies with other implementations of HMAC_SHA1. Or fire up [HMAC](https://nodejs.org/api/crypto.html#crypto_class_hmac) from node's crypto lib.
 
