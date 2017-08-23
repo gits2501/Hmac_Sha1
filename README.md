@@ -1,4 +1,4 @@
-## Hmac_Sha1
+## Hmac_Sha1        [![Build Status](https://travis-ci.org/gits2501/Hmac_Sha1.svg?branch=master)](https://travis-ci.org/gits2501/Hmac_Sha1)
 
 
 In order to utilise many free APIs, communication with server needs authentication checks for the application that access it and for user in which name application makes the request. Lot's of API's still require [OAuth 1.0a](https://oauth.net/core/1.0a/#anchor15), where [HMAC_SHA1](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code#Implementation) is significant part, for that purpose. 
