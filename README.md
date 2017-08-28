@@ -93,6 +93,5 @@ hmacSha1 = new HmacSha1();
 hmacSha1.digest("ke\\y", "So\\me mess\\age") // 136d22549e17ee6665dc398bbba43c5e912e3e92
 // Result is like we passed "ke\y" and "So\me mess\age"
 ```
-You can test keys and messages [here](https://jsfiddle.net/dzh5euo4/3/)(open console) in jsfiddle. 
-And a [reference point](https://caligatio.github.io/jsSHA/) so you can see it complies with other implementations of HMAC_SHA1. Or fire up [HMAC](https://nodejs.org/api/crypto.html#crypto_class_hmac) from node's crypto lib.
+A [reference point](https://caligatio.github.io/jsSHA/) so you can see it complies with other implementations of HMAC_SHA1. Or fire up [HMAC](https://nodejs.org/api/crypto.html#crypto_class_hmac) from node's crypto lib.
 
