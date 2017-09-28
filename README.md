@@ -1,4 +1,4 @@
-## Hmac_Sha1
+## Hmac_Sha1        [![Build Status](https://travis-ci.org/gits2501/Hmac_Sha1.svg?branch=master)](https://travis-ci.org/gits2501/Hmac_Sha1)
 
 
 In order to utilise many free APIs, communication with server needs authentication checks for the application that access it and for user in which name application makes the request. Lot's of API's still require [OAuth 1.0a](https://oauth.net/core/1.0a/#anchor15), where [HMAC_SHA1](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code#Implementation) is significant part, for that purpose. 
@@ -25,6 +25,9 @@ So we cant use different data then what sha1 has really produced, what we can do
 In this context it's good to think that sha1 spits out hex string by treating every 4 bits of underlying data, a *nibble*. And that we compress that string by mapping 8 bits of data to their string representation.
 
 That is char "N" is *exact mapping* of data that sha1 produced it is not hex string representation of data. If we have 40 hex chars that means 40 bytes and by [SHA1 rfc](https://tools.ietf.org/html/rfc2104), sha1 produces 20 byte data. By doing this conversion we get that 20 byte data and all the time we are using strings with same effect if we were using ArrayBuffer/Buffer, at least that's the idea
+## Installation
+#### node.js
+`npm install hmac_sha1`
 
 ## Usage
 
@@ -64,12 +67,12 @@ hmacSha1 = new HmacSha1('base64');
 hmacSha1.digest('key', 'The quick brown fox jumps over the lazy dog¶汉字💩', 'utf8'); // LYsDRV73mlS0VAkq5WSr915Nnu4=                                                                            
 ```
 ##### Caviat
-But, when you are using 'utf8' encoding your key must be in ascii code. Basicaly it means that only your baseString (message) is allowed to have non ascii chars. If that's not the case function throws an error:
+But, when you are using 'utf8' encoding your `key` must be in ascii code. Basicaly it means that only your baseString (message) is allowed to have non ascii chars. If that's not the case function throws an error:
 ```javascript
-hmacSha1 = HmacSha1();
-hmac.digest('key¶汉字','The quick brow fox jumps over the lazy dog¶汉字💩', 'utf8' ) // Error 
+hmacSha1 = new HmacSha1('base64');
+hmac.digest('key¶汉字','The quick brown fox jumps over the lazy dog¶汉字💩', 'utf8' ) // Error 
 
-hmac.digest('key','The quick brow fox jumps over the lazy dog¶汉字💩', 'utf8' ) // LYsDRV73mlS0VAkq5WSr915Nnu4=
+hmac.digest('key','The quick brown fox jumps over the lazy dog¶汉字💩', 'utf8' ) // LYsDRV73mlS0VAkq5WSr915Nnu4=
 
 ```
 ##### Note:
@@ -90,6 +93,5 @@ hmacSha1 = new HmacSha1();
 hmacSha1.digest("ke\\y", "So\\me mess\\age") // 136d22549e17ee6665dc398bbba43c5e912e3e92
 // Result is like we passed "ke\y" and "So\me mess\age"
 ```
-You can test keys and messages [here](https://jsfiddle.net/dzh5euo4/3/)(open console) in jsfiddle. 
-And a [reference point](https://caligatio.github.io/jsSHA/) so you can see it complies with other implementations of HMAC_SHA1. Or fire up [HMAC](https://nodejs.org/api/crypto.html#crypto_class_hmac) from node's crypto lib.
+A [reference point](https://caligatio.github.io/jsSHA/) so you can see it complies with other implementations of HMAC_SHA1. Or fire up [HMAC](https://nodejs.org/api/crypto.html#crypto_class_hmac) from node's crypto lib.
 
