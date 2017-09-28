@@ -28,9 +28,11 @@ catch(err){
 
        var opad_key = ""; // outer padded key
        var ipad_key = ""; // inner padded key
-       var kLen = (enc === 'latin-1' || enc === 'utf8') ? this.asciiOnly(key) : key.length; // enforce ascii in
+
+       if(!enc) enc = 'binary'; // fix for node versions >=6.0.0, in which default encoding is changed to utf-8
+       var kLen = (enc === 'latin-1' || enc === 'utf8') ? this.asciiOnly(key) : key.length; // Enforce ascii in
                                                                                      // key, only  if non ascii 
-                                                                                    // encoding specified.
+                                                                                     // encoding specified.
        var diff;         
        var hashedKeyLen;
 
