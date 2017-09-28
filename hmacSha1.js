@@ -5,10 +5,12 @@ try{
   crypto = require('crypto');
   
    sha1 = function(key,enc, format){
-      var hash = crypto.createHash('sha1'); // create instance of sha1
-      hash.update(key, enc);                // feed data to it, specify encoding
-      format = format || 'hex';             // defaults to hex,
-      return  hash.digest(format);          // return result specified format
+      enc =  enc || 'binary';               // Fix for node versions >=6.0.0, in which default encoding is 
+                                            // changed to utf-8.
+      format = format || 'hex';             // Defaults to hex
+      var hash = crypto.createHash('sha1'); // Create instance of sha1
+      hash.update(key, enc);                // Feed data to it, specify encoding
+      return  hash.digest(format);          // Return result specified format
    }
 
 }
@@ -28,9 +30,10 @@ catch(err){
 
        var opad_key = ""; // outer padded key
        var ipad_key = ""; // inner padded key
-       var kLen = (enc === 'latin-1' || enc === 'utf8') ? this.asciiOnly(key) : key.length; // enforce ascii in
+
+       var kLen = (enc === 'latin-1' || enc === 'utf8') ? this.asciiOnly(key) : key.length; // Enforce ascii in
                                                                                      // key, only  if non ascii 
-                                                                                    // encoding specified.
+                                                                                     // encoding specified.
        var diff;         
        var hashedKeyLen;
 
