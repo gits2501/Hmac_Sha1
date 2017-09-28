@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node ./test/test.js"
   },
-  "engines": {"node": "<6.0.0"},
+  "engines": {"node": "*"},
   "author": {
     "name":"gits2501",
     "email":"telhurat@hotmail.com",
