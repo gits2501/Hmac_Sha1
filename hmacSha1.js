@@ -5,7 +5,8 @@ try{
   crypto = require('crypto');
   
    sha1 = function(key,enc, format){
-      if(!enc) enc = 'binary'; // fix for node versions >=6.0.0, in which default encoding is changed to utf-8
+      enc =  enc || 'binary';              // Fix for node versions >=6.0.0, in which default encoding is 
+                                            // changed to utf-8.
       var hash = crypto.createHash('sha1'); // create instance of sha1
       hash.update(key, enc);                // feed data to it, specify encoding
       format = format || 'hex';             // defaults to hex,
