@@ -5,12 +5,12 @@ try{
   crypto = require('crypto');
   
    sha1 = function(key,enc, format){
-      enc =  enc || 'binary';              // Fix for node versions >=6.0.0, in which default encoding is 
+      enc =  enc || 'binary';               // Fix for node versions >=6.0.0, in which default encoding is 
                                             // changed to utf-8.
-      var hash = crypto.createHash('sha1'); // create instance of sha1
-      hash.update(key, enc);                // feed data to it, specify encoding
-      format = format || 'hex';             // defaults to hex,
-      return  hash.digest(format);          // return result specified format
+      format = format || 'hex';             // Defaults to hex
+      var hash = crypto.createHash('sha1'); // Create instance of sha1
+      hash.update(key, enc);                // Feed data to it, specify encoding
+      return  hash.digest(format);          // Return result specified format
    }
 
 }
