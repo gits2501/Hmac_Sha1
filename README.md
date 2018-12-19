@@ -95,3 +95,8 @@ hmacSha1.digest("ke\\y", "So\\me mess\\age") // 136d22549e17ee6665dc398bbba43c5e
 ```
 A [reference point](https://caligatio.github.io/jsSHA/) so you can see it complies with other implementations of HMAC_SHA1. Or fire up [HMAC](https://nodejs.org/api/crypto.html#crypto_class_hmac) from node's crypto lib.
 
+
+Don't feel obliged to donate but any donation is greatly appreciated.
+
+ [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/gits2501pp)
+
